@@ -143,3 +143,5 @@ LOGGING = {
         },
     }
 }
+
+PASSWORD_SALT = ""

@@ -3,6 +3,7 @@ from django.conf import settings
 import crypt
 
 class User_service():
+
 	def findUser(self, filter):
 		users = User.objects.filter(**filter);
 		if len(users) > 0:

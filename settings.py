@@ -144,4 +144,5 @@ LOGGING = {
     }
 }
 
-PASSWORD_SALT = ""
+PASSWORD_SALT = "test"
+SESSION_SALT = "test"

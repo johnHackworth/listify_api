@@ -2,7 +2,6 @@ from django.db import models
 import json
 
 class User(models.Model):
-  id = models.IntegerField(max_length=7)    
   name = models.CharField(max_length=255)
   lastname = models.CharField(max_length=255)
   login = models.CharField(max_length=255)
@@ -21,21 +20,41 @@ class User(models.Model):
   access_number= models.IntegerField(max_length=11, db_column="accessNumber")
   email_notifications = models.IntegerField(max_length=1, db_column="emailNotifications")
   
-  def asJSON(self):
-    fields = ["id", "name", "lastname", "login", "email", "location", "country", "gender", "birthday", "aboutme", "languaje", "access_number"]
-    jsonObj = {}
+  def asDict(self, fields = ["id", "name", "lastname", "login", "email", "location", "country", "gender", "birthday", "aboutme", "languaje", "access_number"]):
+    dictionary = {}
     for field in fields:
-      jsonObj[field] = getattr(self,field)
+      dictionary[field] = getattr(self,field)
 
     if self.image_id is not None and self.image_id > 0:
       imageObj = Image.objects.filter(id=self.image_id)
       if len(imageObj) > 0:
-        jsonObj['image_url'] = imageObj[0].url
+        dictionary['image_url'] = imageObj[0].url
 
-    return  json.dumps(jsonObj)
+    return dictionary
+
+  def asJSON(self, fields = ["id", "name", "lastname", "login", "email", "location", "country", "gender", "birthday", "aboutme", "languaje", "access_number"]):
+    return json.dumps(self.asDict(fields))
+
+ 
+
+
 
 
 class Image(models.Model):
-  id = models.IntegerField(max_length=11)   
   url = models.CharField(max_length=1024)
   user_id = models.IntegerField(max_length=11)
+
+
+class Session(models.Model):
+  user_id = models.IntegerField(max_length=7)
+  hash = models.CharField(max_length=255)
+
+  def asDict(self, fields = ["id", "user_id", "hash"]):
+    dictionary = {}
+    for field in fields:
+      dictionary[field] = getattr(self,field)
+
+    return dictionary
+
+  def asJSON(self, fields = ["id", "user_id", "hash"]):
+    return json.dumps(self.asDict(fields))  

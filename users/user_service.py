@@ -1,8 +1,12 @@
-from users.models import User
+from users.models import User, Session
+from users.session_service import *
 from django.conf import settings
 import crypt
+import json
 
 class User_service():
+
+	sessionService = Session_service()
 
 	def findUser(self, filter):
 		users = User.objects.filter(**filter);
@@ -16,8 +20,18 @@ class User_service():
 			user = self.findUser({"login":username});
 			if user is not None:
 				if user.password == crypt.crypt(password, settings.PASSWORD_SALT):
-					return "create a session goes here"
+					session = self.sessionService.createSession(user.id)
+					session.save()
+					return self.userSessionInfo(user, session)
 		return None
+
+	def userSessionInfo(self, user, session):
+		userDict = user.asDict()
+		userDict['session'] = session.asDict(["id", "hash"])
+		return json.dumps(userDict)
+
+
+
 
 
 		

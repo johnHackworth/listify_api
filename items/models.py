@@ -1,7 +1,8 @@
 from django.db import models
-import json
+from commons.models import lfyModel
 
-class Item(models.Model):
+
+class Item(lfyModel, models.Model):
 	name = models.CharField(max_length=255)
 	url = models.CharField(max_length=255)
 	user_id = models.IntegerField(max_length=11)
@@ -15,4 +16,5 @@ class Item(models.Model):
 	date = models.TimeField()
 	image_id = models.IntegerField(max_length=9)
 	state = models.IntegerField(max_length=11)
-	screencap = models.CharField(max_length=255)     
+	screencap = models.CharField(max_length=255)
+

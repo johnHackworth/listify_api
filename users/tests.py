@@ -10,7 +10,7 @@ from users.models import *
 from users.user_service import *
 from users.session_service import *
 
-class testCaseFactory:
+class usersTestCaseFactory:
 	def user(self):
 		user = User()
 		user.name = 'Johnathan Percival'
@@ -39,7 +39,7 @@ class testCaseFactory:
 		return [user, user2, user3]
 
 class UserModelTest(TestCase):
-	casesFactory = testCaseFactory()
+	casesFactory = usersTestCaseFactory()
 
 	def test_export_dictionary(self):
 		user = self.casesFactory.user()
@@ -69,7 +69,7 @@ class UserModelTest(TestCase):
 		self.assertTrue(jsonObj =='{"name": "Johnathan Percival"}')
 
 class userServiceTest(TestCase):
-	casesFactory = testCaseFactory()
+	casesFactory = usersTestCaseFactory()
 	user_service = User_service()
 
 	def test_find_user(self):
@@ -98,7 +98,7 @@ class userServiceTest(TestCase):
 		# add some json checks
 
 class sessionServiceTest(TestCase):
-	casesFactory = testCaseFactory()
+	casesFactory = usersTestCaseFactory()
 	user_service = User_service()	
 	session_service = Session_service()
 

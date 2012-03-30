@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     'users',
     'items',
     'commons',
+    'lists'
 )
 
 # A sample logging configuration. The only tangible logging

@@ -17,6 +17,7 @@ class LoginHandler(BaseHandler):
 	else:
 		return HttpResponse(result)
 
+	def delete
 class UserHandler(BaseHandler):
 
 	allowed_methods = ('GET')

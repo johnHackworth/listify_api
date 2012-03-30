@@ -1,6 +1,7 @@
 from django.db import models
 from commons.models import lfyModel
 import json
+from datetime import datetime
 
 class User(lfyModel, models.Model):
   name = models.CharField(max_length=255)
@@ -13,7 +14,7 @@ class User(lfyModel, models.Model):
   gender = models.IntegerField(max_length=1, default = 1)
   birthday = models.DateField(default = "2001-01-01")
   creationdate = models.DateField(auto_now=True, auto_now_add=True)
-  lastlogin = models.DateField(default = "2001-01-01")
+  lastlogin = models.DateTimeField(default = str(datetime.now()))
   aboutme = models.CharField(max_length = 1024)
   languaje = models.IntegerField(max_length = 3, default = 0)
   image_id = models.IntegerField(max_length=11, default = 1)
@@ -32,9 +33,6 @@ class User(lfyModel, models.Model):
         dictionary['image_url'] = imageObj[0].url
     
     return dictionary
-
-
-
 
 class Image(models.Model):
   url = models.CharField(max_length=1024)

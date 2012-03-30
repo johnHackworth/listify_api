@@ -1,0 +1,42 @@
+users/ (new - post)
+users/{id} (save -put)
+users/friends -> get user friends
+users/closeSession -> close current session
+users/recover -> recover password
+users/gethash -> ?
+users/changePasswordHash -> ?
+
+
+favorites/favorites/{user}
+favorites/favoritesByOthets/{user}
+favorites/favorite/{item_id} (new - post)
+favorites/favorite/{item_id} (delete - delete)
+
+item/{id} post
+item/{id} get
+item/{id} put
+item/{id} delete
+item/copy/{id} 
+
+
+lists/friendItems/{user}
+lists/friendItems/{user}
+lists/user/{user_id} (getlists)
+lists/{id} (new - edit - get -delete)
+lists/full/{id} (get with items)
+lists/all/ (last items)
+lists/tag/{tag}
+lists/full/all/{id} all user items
+
+notifications/ (get all)
+notifictions/{id} (put - save as read)
+
+friends/{user_id} (new - post)
+friends/{user_id} (delete - delete)
+friends/{user_id} (list - get)
+
+
+
+comments/user -> get user comments
+comments/item -> get item comments
+comments/responses/{user} -> get responses

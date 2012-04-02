@@ -1,13 +1,14 @@
 from lists.models import List
-from items.item_service import Item_service
 from django.conf import settings
 import crypt
 import json
 
 class List_service():
 
-	item_service = Item_service()
-	
+	item_service = None;
+
+	def __init__(self, item_service):
+		self.item_service = item_service	
 
 	def findList(self, filter):
 		lists = List.objects.filter(**filter);

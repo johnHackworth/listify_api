@@ -1,12 +1,14 @@
 from items.models import Item, Image, Url
 from django.conf import settings
-# from lists.list_service import list_service
-import crypt
+import crypt 
 import json
 
 class Item_service():
 
-	# list_service = List_service()
+	list_service = None;
+
+	def __init__(self, list_service):
+		self.list_service = list_service
 
 	def findOneItem(self, filter):
 		items = Item.objects.filter(**filter);
@@ -28,7 +30,7 @@ class Item_service():
 		if self.user_id is not None and self.user_id > 0:
 			user = user_service.findUser({"id":self.user_id})
 			dictionary['user'] = user.asDict(["name","lastname","id","login"])
-		# if self.list_id is not None and self.user_list > 0:
-		# 	containerList = list_service.findList({"id": self.id})
-		# 	dictionary["list"] = containerList.asDict()
+		if self.list_service is not None and self.list_id is not None and self.user_list > 0:
+		 	containerList = list_service.findList({"id": self.id})
+		 	dictionary["list"] = containerList.asDict()
 		return dictionary

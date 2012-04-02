@@ -34,3 +34,6 @@ class Item_service():
 		 	containerList = list_service.findList({"id": self.id})
 		 	dictionary["list"] = containerList.asDict()
 		return dictionary
+	def saveItem(self, item):
+		item.save()
+		return item

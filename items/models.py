@@ -15,7 +15,7 @@ class Item(lfyModel, models.Model):
 	author = models.CharField(max_length=255)
 	date = models.DateTimeField(str(datetime.now()))
 	image_id = models.IntegerField(max_length=9)
-	state = models.IntegerField(max_length=11)
+	state = models.IntegerField(max_length=11, default =0)
 	screencap = models.CharField(max_length=255)
 
 	fields = ["name", "url", "image_url", "text", "price", 

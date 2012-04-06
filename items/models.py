@@ -1,10 +1,11 @@
 from django.db import models
 from commons.models import lfyModel
+from commons.exceptions import InvalidFields
 from datetime import datetime
 
 class Item(lfyModel, models.Model):
-	name = models.CharField(max_length=255)
-	url = models.CharField(max_length=255)
+	name = models.CharField(max_length=255, default=None)
+	url = models.CharField(max_length=255, default=None)
 	user_id = models.IntegerField(max_length=11)
 	category = models.IntegerField(max_length=5)
 	list_id = models.IntegerField(max_length=9)
@@ -14,12 +15,23 @@ class Item(lfyModel, models.Model):
 	currency = models.IntegerField(max_length=3)
 	author = models.CharField(max_length=255)
 	date = models.DateTimeField(str(datetime.now()))
-	image_id = models.IntegerField(max_length=9)
+	image_id = models.IntegerField(max_length=9, default=1)
 	state = models.IntegerField(max_length=11, default =0)
 	screencap = models.CharField(max_length=255)
 
 	fields = ["name", "url", "image_url", "text", "price", 
 	"currency", "author", "date", "state", "screencap"]
+
+	def validate(self):
+		invalidFields = []
+		if self.list_id is None:
+			invalidFields.append('list_id')
+		if self.name is None:
+			invalidFields.append('name')
+		if self.url is None:
+			invalidFields.append('url')
+		if len(invalidFields) > 0:
+			raise InvalidFields(invalidFields)
 
 class Image(lfyModel, models.Model):
 	url = models.CharField(max_length=255)

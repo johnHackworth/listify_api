@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseNotAllowed
 from items.models import Item
 from items.item_service import Item_service
 from users.session_service import Session_service
 from users.user_service import User_service
-from commons.exceptions import MethodNotAllowed, InvalidFields
+from commons.exceptions import MethodNotAllowedException, InvalidFieldsException
 from commons.models import lfyHandler
 
 
@@ -15,19 +15,22 @@ class ItemHandler(lfyHandler):
   user_service = User_service()
   session_service = Session_service(user_service)
 
-  fields = ["name", "url", "image_url", "text", "price", "currency", "author", "date", "state", "screencap", "list_id"]
+  fields = ["name", "url", "image_url", "text", "price", "currency", "author", "state", "screencap", "list_id"]
  
   def read(self, request, id):
-    loggedUser = self.session_service.getLoggedUser(request)
-    
-    if loggedUser is not None:
-      item = self.item_service.findOneItem({"id":id})
-      if item is not None:
+    item = self.item_service.findOneItem({"id":id})
+    if item is not None:
+      loggedUser = self.session_service.getLoggedUser(request)
+      ownerUser = self.user_service.findUser({"id":item.user_id})
+      # @TODO : waiting for list_service to be implemented
+      # if self.list_service.getPermissions(item.list_id) <= self.user_service.getRelationLevel(ownerUser, loggedUser):
+
+      if True:
         return HttpResponse(item.asJSON())
       else:
-        return HttpResponseNotFound()
+        return HttpResponseNotAllowed('<h1>not allowed</h1>')
     else:
-      return HttpResponseForbidden('<h1>not a user</h1>')
+      return HttpResponseNotFound()
 
   def update(self, request, id):
     loggedUser = self.session_service.getLoggedUser(request)
@@ -75,7 +78,7 @@ class ItemHandler(lfyHandler):
 
       try:
         item.validate()
-      except InvalidFields as invalidFields:
+      except InvalidFieldsException as invalidFields:
         return HttpResponseForbidden(invalidFields)
 
       self.item_service.saveItem(item)

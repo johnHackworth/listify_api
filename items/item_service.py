@@ -35,5 +35,9 @@ class Item_service():
 		 	dictionary["list"] = containerList.asDict()
 		return dictionary
 	def saveItem(self, item):
+		try:
+			item.validate()
+		except InvalidFieldsException as invalidFields:
+			raise invalidFields
 		item.save()
 		return item

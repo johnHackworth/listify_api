@@ -1,6 +1,6 @@
 from django.db import models
 from commons.models import lfyModel
-from commons.exceptions import InvalidFields
+from commons.exceptions import InvalidFieldsException
 from datetime import datetime
 
 class Item(lfyModel, models.Model):
@@ -31,7 +31,7 @@ class Item(lfyModel, models.Model):
 		if self.url is None:
 			invalidFields.append('url')
 		if len(invalidFields) > 0:
-			raise InvalidFields(invalidFields)
+			raise InvalidFieldsException(invalidFields)
 
 class Image(lfyModel, models.Model):
 	url = models.CharField(max_length=255)

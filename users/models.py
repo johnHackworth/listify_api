@@ -1,5 +1,6 @@
 from django.db import models
 from commons.models import lfyModel
+from commons.exceptions import InvalidFieldsException
 import json
 from datetime import datetime
 
@@ -33,6 +34,17 @@ class User(lfyModel, models.Model):
         dictionary['image_url'] = imageObj[0].url
     
     return dictionary
+
+  def validate(self):
+    invalidFields = []
+    if self.login is None:
+      invalidFields.append('login')
+    if self.password is None:
+      invalidFields.append('password')
+    if self.email is None:
+      invalidFields.append('email')
+    if len(invalidFields) > 0:
+      raise InvalidFieldsException(invalidFields)    
 
 class Image(models.Model):
   url = models.CharField(max_length=1024)

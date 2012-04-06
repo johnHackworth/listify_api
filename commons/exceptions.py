@@ -1,13 +1,25 @@
-class MethodNotAllowed(Exception):
+class lfyException(Exception):
+	txt = 'error: '
 	def __init__(self, value):
 		self.value = value
 	def __str__(self):
-		txt = 'Method not allowed: '
-		return repr(txt+self.value)
+		return repr(self.txt+str(self.value))
 
-class InvalidFields(Exception):
-	def __init__(self, fields):
-		self.fields = fields
-	def __str__(self):
-		txt = 'Some fields are invalid: '+str(self.fields)
-		return repr(txt)
+
+class MethodNotAllowedException(lfyException):
+	txt = 'Method not allowed: '
+
+class InvalidFieldsException(lfyException):
+	txt = 'Some fields are invalid: '
+
+class InvalidPasswordException(lfyException):
+	txt = 'Invalid password: '
+
+class ExistingUserException(lfyException):
+	txt = 'Invalid user: '
+
+class ExistingEmailException(ExistingUserException):
+	txt = 'Existing email: '
+
+class ExistingLoginException(ExistingUserException):
+	txt = 'Existing login: '	

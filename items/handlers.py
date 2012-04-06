@@ -22,7 +22,10 @@ class ItemHandler(lfyHandler):
     
     if loggedUser is not None:
       item = self.item_service.findOneItem({"id":id})
-      return HttpResponse(item.asJSON())
+      if item is not None:
+        return HttpResponse(item.asJSON())
+      else:
+        return HttpResponseNotFound()
     else:
       return HttpResponseForbidden('<h1>not a user</h1>')
 
@@ -30,19 +33,37 @@ class ItemHandler(lfyHandler):
     loggedUser = self.session_service.getLoggedUser(request)
     if loggedUser is not None:
       item = self.item_service.findOneItem({"id":id})
-      if loggedUser.id != item.user_id:
-        return HttpResponseForbidden('<h1>not the owner</h1>')
+      if item is not None:
+        if loggedUser.id != item.user_id:
+          return HttpResponseForbidden('<h1>not the owner</h1>')
+        else:
+          self.fromRequest(request, item, self.fields)
+          self.item_service.saveItem(item)
+        
+        return HttpResponse(item.asJSON())
       else:
-        self.fromRequest(request, item, self.fields)
-        self.item_service.saveItem(item)
-      
-      return HttpResponse(item.asJSON())
+        return HttpResponseNotFound()      
     else:
       return HttpResponseForbidden('<h1>not a user</h1>')
 
 
-  def delete(self):
-    pass
+  def delete(self, request, id):
+    loggedUser = self.session_service.getLoggedUser(request)
+    
+    if loggedUser is not None:
+      item = self.item_service.findOneItem({"id":id})
+      if item is not None:
+        if loggedUser.id != item.user_id:
+          return HttpResponseForbidden('<h1>not the owner</h1>')
+        else:
+          item.delete()
+          return HttpResponse('<h1>ok</h1>')
+      else:
+        return HttpResponseNotFound()      
+
+    else:
+      return HttpResponseForbidden('<h1>not a user</h1>')
+
 
   def create(self, request):
 
@@ -51,7 +72,7 @@ class ItemHandler(lfyHandler):
       item = Item()
       self.fromRequest(request, item, self.fields)
       item.user_id = loggedUser.id
-      
+
       try:
         item.validate()
       except InvalidFields as invalidFields:

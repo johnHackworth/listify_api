@@ -20,7 +20,7 @@ class Item(lfyModel, models.Model):
 	screencap = models.CharField(max_length=255)
 
 	fields = ["name", "url", "image_url", "text", "price", 
-	"currency", "author", "date", "state", "screencap"]
+	"currency", "author", "date", "state", "screencap", "id"]
 
 	def validate(self):
 		invalidFields = []

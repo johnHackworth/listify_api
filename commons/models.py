@@ -34,9 +34,9 @@ class lfyHandler(BaseHandler):
     for field in fields:
       fieldVal = None
       if request.META['REQUEST_METHOD'] == 'POST':
-        if field in request.POST:
+        if field is not 'id' and field in request.POST:
           fieldVal = request.POST.get(field) 
-      elif request.META['REQUEST_METHOD'] == 'PUT':
+      elif field is not 'id' and request.META['REQUEST_METHOD'] == 'PUT':
         if field in request.PUT:
           fieldVal = request.PUT.get(field)
       else:

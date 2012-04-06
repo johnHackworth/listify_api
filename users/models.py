@@ -5,11 +5,11 @@ import json
 from datetime import datetime
 
 class User(lfyModel, models.Model):
-  name = models.CharField(max_length=255)
-  lastname = models.CharField(max_length=255)
-  login = models.CharField(max_length=255)
-  password = models.CharField(max_length=255)
-  email = models.CharField(max_length=255)
+  name = models.CharField(max_length=255, default = '')
+  lastname = models.CharField(max_length=255, default = '')
+  login = models.CharField(max_length=255, default = None)
+  password = models.CharField(max_length=255, default = None)
+  email = models.CharField(max_length=255, default = None)
   location = models.CharField(max_length=255)
   country = models.IntegerField(max_length=3, default = 1)
   gender = models.IntegerField(max_length=1, default = 1)

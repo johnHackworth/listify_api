@@ -9,6 +9,9 @@ from django.test import TestCase
 from users.models import *
 from users.user_service import *
 from users.session_service import *
+from commons.mocks import RequestFactory
+from commons.exceptions import InvalidFieldsException, InvalidPasswordException
+import json
 
 class usersTestCaseFactory:
 	def user(self):
@@ -27,14 +30,22 @@ class usersTestCaseFactory:
 		user = User()
 		user.name = 'Erasmas'
 		user.login = 'erasmas'
+		user.password = crypt.crypt("abcde", settings.PASSWORD_SALT)
+		user.email = 'a1@listify.es'
 		user.save()
 		user2 = User()
 		user2.name = 'Orolo'
 		user2.login = 'orolo'
+		user2.password = crypt.crypt("abcde", settings.PASSWORD_SALT)
+		user2.email = 'a2@listify.es'
+
 		user2.save()
 		user3 = User()
 		user3.name = 'Raz'
 		user3.login = 'raz'
+		user3.password = crypt.crypt("abcde", settings.PASSWORD_SALT)
+		user3.email = 'a3@listify.es'
+
 		user3.save()
 		return [user, user2, user3]
 
@@ -68,11 +79,56 @@ class UserModelTest(TestCase):
 		print jsonObj
 		self.assertTrue(jsonObj =='{"name": "Johnathan Percival"}')
 
+	def test_validate(self):
+		user = self.casesFactory.user()
+		user.login = None
+		user.password = None
+		user.email = None
+		try:
+			user.validate()
+			self.fail()
+		except InvalidFieldsException:
+			self.assertTrue(True)
+		except:
+			self.fail('bad type of exception')
+
+		user.login = 'a'
+		try:
+			user.validate()
+			self.fail()
+		except InvalidFieldsException:
+			self.assertTrue(True)
+		except:
+			self.fail('bad type of exception')
+
+		user.password = 'a'
+		try:
+			user.validate()
+			self.fail()
+		except InvalidFieldsException:
+			self.assertTrue(True)
+		except:
+			self.fail('bad type of exception')
+
+		user.email = 'a'
+		try:
+			user.validate()
+			
+		except:
+			self.fail()
+
+
+
+
+
+
+
 class userServiceTest(TestCase):
 	casesFactory = usersTestCaseFactory()
 	user_service = User_service()
+	session_service = Session_service(user_service)
 
-	def test_find_user(self):
+	def test_findUser(self):
 		newUsers = self.casesFactory.users()
 
 		user1 = self.user_service.findUser({"name" : "Orolo"})
@@ -87,20 +143,105 @@ class userServiceTest(TestCase):
 		user3 = self.user_service.findUser({"login" : 'Fra'})
 		self.assertEquals(user3, None)
 
-	def test_log_user(self):
-		user = self.casesFactory.user()
-		user.save()
 
-		session = self.user_service.logUser('theAlchemist', 'abcde');
+	def test_saveUser(self):
+		user = User()
+		try:
+			self.user_service.saveUser(user)
+			self.fail()
+		except InvalidFieldsException:
+			self.assertTrue(True)
 
-		self.assertFalse(session == None);
+		user.login = 'prueba'
+		user.password = 'prueba'
+		user.email = 'prueba@prueba'
 
-		# add some json checks
+		try:
+			user = self.user_service.saveUser(user)
+		except InvalidFieldsException:
+			self.fail()
+
+		userDB = self.user_service.findUser({'login':'prueba'})
+
+		self.assertEquals(user.id, userDB.id)
+
+	def test_saveRepeatedUser(self):
+
+		user = User()
+		user.login = 'prueba'
+		user.password = 'prueba'
+		user.email = 'prueba@prueba'
+		try:
+			self.user_service.saveUser(user)
+		except:
+			self.fail()
+
+		user2 = User()
+		user2.login = 'prueba'
+		user2.password = 'prueba'
+		user2.email = 'prueba2@prueba'
+		success = False
+		try:
+			self.user_service.saveUser(user2)
+		except:
+			success = True
+		self.assertTrue(success)
+
+		user3 = User()
+		user3.login = 'prueba3'
+		user3.password = 'prueba'
+		user3.email = 'prueba@prueba'
+		success = False
+		try:
+			self.user_service.saveUser(user3)
+		except:
+			success = True
+		self.assertTrue(success)
+
+	def test_userSessionInfo(self):
+		newUsers = self.casesFactory.users()
+		user1 = self.user_service.findUser({"name" : "Orolo"})
+		session = self.session_service.createSession(user1.id)
+		
+		userSessionInfo = self.user_service.userSessionInfo(user1, session)
+
+		testCase = user1.asDict()
+		testCase2 = session.asDict(["id", "hash"])
+		testCase["session"] = testCase2
+		testCase = json.dumps(testCase)
+
+
+	
+		self.assertEquals(testCase, userSessionInfo)
+
+	def test_assignPassword(self):
+
+		newUsers = self.casesFactory.users()
+		user1 = self.user_service.findUser({"name" : "Orolo"})
+
+		success = False
+		try:
+			self.user_service.assignPassword(user1, 'prueba', 'prueba2')
+		except InvalidPasswordException:
+			success = True
+		except:
+			success = False
+		self.assertTrue(success)
+
+		try:
+			self.user_service.assignPassword(user1, 'abcde', 'prueba2')
+			success = True
+		except:
+			success = False
+
+		self.assertTrue(success)
+
+
 
 class sessionServiceTest(TestCase):
 	casesFactory = usersTestCaseFactory()
 	user_service = User_service()	
-	session_service = Session_service()
+	session_service = Session_service(user_service)
 
 	def test_create_session(self):
 		session = self.session_service.createSession(1)
@@ -108,13 +249,43 @@ class sessionServiceTest(TestCase):
 		self.assertTrue(session.hash is not None)
 		self.assertTrue(len(session.hash) > 10)
 
-	def test_check_session(self):
+	def test_getSession(self):
 		session = self.session_service.createSession(1)
 		session.save()
+		rf = RequestFactory()
+		request = rf.get('fake/path')
+		request = rf.setHeaders(1,session.id, session.hash, request)
 
-		sessionExists = self.session_service.checkSession(1,session.id, session.hash)
+		userSession = self.session_service.getSession(request)
+		self.assertFalse(userSession is None)
+		self.assertTrue(userSession.id == session.id)
+		self.assertTrue(userSession.user_id == 1)
 
-		self.assertTrue(sessionExists)
+
+	def test_logUser(self):
+		user = self.casesFactory.user()
+		user.save()
+
+		session = self.session_service.logUser('theAlchemist', 'abcde');
+
+		self.assertFalse(session == None);
+
+	def test_getLoggedUser(self):
+		user = self.casesFactory.user()
+		user.save()
+		session = self.session_service.createSession(user.id)
+		session.save()
+
+		rf = RequestFactory()
+		request = rf.get('fake/path')
+		request = rf.setHeaders(user.id,session.id, session.hash, request)
+
+		loggedUser = self.session_service.getLoggedUser(request)
+
+		self.assertFalse(loggedUser is None)
+		self.assertEquals(user.id, loggedUser.id)
+
+
 
 
 

@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from users.user_service import User_service
 from users.models import User

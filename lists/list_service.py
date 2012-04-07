@@ -1,4 +1,5 @@
 from lists.models import List
+from commons.exceptions import InvalidFieldsException
 from django.conf import settings
 import crypt
 import json
@@ -10,7 +11,7 @@ class List_service():
 	def __init__(self, item_service):
 		self.item_service = item_service	
 
-	def findList(self, filter):
+	def findOneList(self, filter):
 		lists = List.objects.filter(**filter);
 		if len(lists) > 0:
 			return lists[0]
@@ -19,3 +20,11 @@ class List_service():
 
 	def getItems(self, list):
 		return self.item_service.findItems({"list_id": list.id})
+
+	def saveList(self, lfyList):
+		try:
+			lfyList.validate()
+		except InvalidFieldsException as invalidFields:
+			raise invalidFields
+		lfyList.save()
+		return lfyList

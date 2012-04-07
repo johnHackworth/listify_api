@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 import users.urls
 import items.urls
+import lists.urls
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -18,4 +19,5 @@ urlpatterns = patterns('',
 
     url(r'^user/', include(users.urls)),
    	url(r'^item/', include(items.urls)),    
+   	url(r'^list/', include(lists.urls)),    
 )

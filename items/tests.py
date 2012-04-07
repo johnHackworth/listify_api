@@ -66,7 +66,7 @@ class ItemServiceTest(TestCase):
 		except:
 			success = False
 
-		self.assertFalse(success)
+		self.assertTrue(success)
 
 		it.list_id = 1
 		success = False 
@@ -76,7 +76,7 @@ class ItemServiceTest(TestCase):
 			success = True 
 		except:
 			success = False
-		self.assertFalse(success)
+		self.assertTrue(success)
 
 		it.name = 'prueba'
 		success = False 
@@ -86,7 +86,7 @@ class ItemServiceTest(TestCase):
 			success = True 
 		except:
 			success = False
-		self.assertFalse(success)
+		self.assertTrue(success)
 
 		it.user_id = 1
 		success = False 
@@ -96,7 +96,7 @@ class ItemServiceTest(TestCase):
 			success = True 
 		except:
 			success = False
-		self.assertFalse(success)
+		self.assertTrue(success)
 
 		it.url = 'url'
 		success = False 

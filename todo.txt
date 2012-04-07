@@ -1,5 +1,5 @@
-users/ (new - post)
-users/{id} (save -put)
+v users/ (new - post)
+v users/{id} (save -put)
 users/friends -> get user friends
 users/closeSession -> close current session
 users/recover -> recover password
@@ -12,10 +12,10 @@ favorites/favoritesByOthets/{user}
 favorites/favorite/{item_id} (new - post)
 favorites/favorite/{item_id} (delete - delete)
 
-item/{id} post
-item/{id} get
-item/{id} put
-item/{id} delete
+v item/{id} post
+v item/{id} get
+v item/{id} put
+v item/{id} delete
 item/copy/{id} 
 
 

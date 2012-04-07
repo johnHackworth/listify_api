@@ -2,6 +2,7 @@ from django.test import TestCase
 from items.models import *
 from items.item_service import *
 from users.tests import usersTestCaseFactory
+from commons.exceptions import InvalidFieldsException
 
 class itemTestCaseFactory(usersTestCaseFactory):
 	def item(self):
@@ -36,16 +37,16 @@ class ItemModelTest(TestCase):
 
 class ItemServiceTest(TestCase):
 	cases_factory = itemTestCaseFactory()
-	item_service = Item_service()
+	item_service = Item_service(None)
 
-	def test_get_item(self):
+	def test_findOneItem(self):
 		it1 = self.cases_factory.item().save()
 
 		item = self.item_service.findOneItem({"text":"old computer"})
 
 		self.assertEquals(item.name, "Sinclair Spectrum")
 
-	def test_find_items(self):
+	def test_findItems(self):
 		it1 = self.cases_factory.item().save()
 		it2 = self.cases_factory.item().save()
 
@@ -54,6 +55,58 @@ class ItemServiceTest(TestCase):
 		self.assertEquals(len(items), 2)
 		self.assertEquals(items[0].name, items[1].name)
 		self.assertTrue(items[0].url == "http://spectrum.es")
+
+	def test_saveItem(self):
+		it = Item()
+		success = False 
+		try:
+			self.item_service.saveItem(it)
+		except InvalidFieldsException:
+			success = True 
+		except:
+			success = False
+
+		self.assertFalse(success)
+
+		it.list_id = 1
+		success = False 
+		try:
+			self.item_service.saveItem(it)
+		except InvalidFieldsException:
+			success = True 
+		except:
+			success = False
+		self.assertFalse(success)
+
+		it.name = 'prueba'
+		success = False 
+		try:
+			self.item_service.saveItem(it)
+		except InvalidFieldsException:
+			success = True 
+		except:
+			success = False
+		self.assertFalse(success)
+
+		it.user_id = 1
+		success = False 
+		try:
+			self.item_service.saveItem(it)
+		except InvalidFieldsException:
+			success = True 
+		except:
+			success = False
+		self.assertFalse(success)
+
+		it.url = 'url'
+		success = False 
+		try:
+			self.item_service.saveItem(it)
+			success = True 
+		except Exception as e:
+			print e
+			success = False
+		self.assertTrue(success)
 
 		
 

@@ -7,14 +7,14 @@ class Item(lfyModel, models.Model):
 	name = models.CharField(max_length=255, default=None)
 	url = models.CharField(max_length=255, default=None)
 	user_id = models.IntegerField(max_length=11)
-	category = models.IntegerField(max_length=5)
+	category = models.IntegerField(max_length=5, default = 0)
 	list_id = models.IntegerField(max_length=9)
 	image_url = models.CharField(max_length=255)
 	text = models.CharField(max_length=1024)
-	price = models.FloatField(max_length=255)
-	currency = models.IntegerField(max_length=3)
+	price = models.FloatField(max_length=255, default = 0)
+	currency = models.IntegerField(max_length=3, default = 0)
 	author = models.CharField(max_length=255)
-	date = models.DateTimeField(str(datetime.now()))
+	date = models.DateTimeField(default = str(datetime.now()))
 	image_id = models.IntegerField(max_length=9, default=1)
 	state = models.IntegerField(max_length=11, default =0)
 	screencap = models.CharField(max_length=255)
@@ -24,6 +24,8 @@ class Item(lfyModel, models.Model):
 
 	def validate(self):
 		invalidFields = []
+		if self.user_id is None:
+			invalidFields.append('user_id')
 		if self.list_id is None:
 			invalidFields.append('list_id')
 		if self.name is None:

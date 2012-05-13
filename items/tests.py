@@ -26,10 +26,10 @@ class itemTestCaseFactory(usersTestCaseFactory):
 
 
 class ItemModelTest(TestCase):
-    casesFactory = itemTestCaseFactory()
+    cases_factory = itemTestCaseFactory()
 
     def test_export_dictionary(self):
-        item = self.casesFactory.item()
+        item = self.cases_factory.item()
 
         itemDict = item.asDict()
         self.assertEquals(itemDict['name'], item.name)
@@ -41,10 +41,17 @@ class ItemServiceTest(TestCase):
     item_service = Item_service(None)
 
     def test_findOneItem(self):
+        item = self.cases_factory.item()
+        item.save()
         item = self.item_service.findOneItem({"text": "old computer"})
         self.assertEquals(item.name, "Sinclair Spectrum")
 
     def test_findItems(self):
+        item = self.cases_factory.item()
+        item2 = self.cases_factory.item()
+        item.save()
+        item2.save()
+
         items = self.item_service.findItems({"name": "Sinclair Spectrum"})
         self.assertEquals(len(items), 2)
         self.assertEquals(items[0].name, items[1].name)

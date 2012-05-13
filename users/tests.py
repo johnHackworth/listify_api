@@ -254,6 +254,7 @@ class userServiceTest(TestCase):
         self.assertEquals(len(friends), 2)
         self.assertEquals(friends[0].id, user2.id)
         self.assertEquals(friends[1].id, user3.id)
+        self.assertFalse(friends[0].id == friends[1].id)
 
 
 

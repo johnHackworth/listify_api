@@ -8,6 +8,8 @@ class Friendship_service():
         return friendship
 
     def isFriend(self, user, friend):
+        if user.id == friend.id:
+            return True
         friendship = self.getFriendship(user, friend)
         if len(friendship) > 0:
             return True
@@ -35,3 +37,10 @@ class Friendship_service():
         for friendship in friendships:
             friendship.delete()
         return True
+
+    def getUserFriendsIds(self, user):
+        friendships = Friendship.objects.filter(user_id=user.id)
+        friend_ids = []
+        for friendship in friendships:
+            friend_ids.append(friendship.friend_id)
+        return friend_ids

@@ -130,7 +130,7 @@ class UserModelTest(TestCase):
 
 class userServiceTest(TestCase):
     casesFactory = usersTestCaseFactory()
-    user_service = User_service(None, Friendship_service())
+    user_service = User_service(Friendship_service())
     session_service = Session_service(user_service)
 
     def test_findUser(self):

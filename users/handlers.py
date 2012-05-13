@@ -1,7 +1,8 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from users.user_service import User_service
-from users.models import User
+from users.models import User, UserList
 from users.session_service import Session_service
+from friends.friendship_service import Friendship_service
 from commons.exceptions import InvalidFieldsException, InvalidPasswordException, ExistingUserException
 from commons.models import lfyHandler
 
@@ -80,3 +81,14 @@ class UserHandler(lfyHandler):
         return HttpResponse(user.asJSON())
 
 
+class FriendsHandler(lfyHandler):
+
+    allowed_methods = ('GET')
+    user_service = User_service(Friendship_service())
+    fields = ["id", "login", "name", "lastname", "email", "location", "country", "gender", "aboutme", "languaje"]
+
+    def read(self, request, identification):
+        user = self.user_service.findUser({"id": identification})
+        friends = UserList(self.user_service.getFriendsList(user))
+
+        return HttpResponse(friends.asJSON(self.fields))

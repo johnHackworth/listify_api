@@ -22,17 +22,17 @@ class User(lfyModel, models.Model):
   level = models.IntegerField(max_length=11, default = 0)
   access_number= models.IntegerField(max_length=11, default = 0, db_column="accessNumber")
   email_notifications = models.IntegerField(max_length=1, default = 0, db_column="emailNotifications")
-  
+
   fields = ["id", "name", "lastname", "login", "email", "location", "country", "gender", "aboutme", "languaje", "access_number"]
 
   def asDict(self, fields = None):
     dictionary = super(User, self).asDict(fields)
-    
+
     if self.image_id is not None and self.image_id > 0:
       imageObj = Image.objects.filter(id=self.image_id)
       if len(imageObj) > 0:
         dictionary['image_url'] = imageObj[0].url
-    
+
     return dictionary
 
   def validate(self):
@@ -44,7 +44,7 @@ class User(lfyModel, models.Model):
     if self.email is None:
       invalidFields.append('email')
     if len(invalidFields) > 0:
-      raise InvalidFieldsException(invalidFields)    
+      raise InvalidFieldsException(invalidFields)
 
 class Image(models.Model):
   url = models.CharField(max_length=1024)
@@ -63,5 +63,24 @@ class Session(models.Model):
     return dictionary
 
   def asJSON(self, fields = ["id", "user_id", "hash"]):
-    return json.dumps(self.asDict(fields))  
+    return json.dumps(self.asDict(fields))
+
+
+class UserList():
+  fields = ["id", "name", "lastname", "login", "email", "location", "country", "gender", "aboutme", "languaje", "access_number"]
+
+  def __init__(self, user_list, fields = None):
+    self.elements = user_list
+    if fields is not None:
+      self.fields = fields
+
+  def asJSON(self, fields=None):
+    members = []
+    if fields is None:
+      fields = self.fields
+    for user in self.elements:
+      members.append(user.asDict(fields))
+    return json.dumps(members)
+
+  elements = []
 

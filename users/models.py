@@ -64,3 +64,4 @@ class Session(models.Model):
 
   def asJSON(self, fields = ["id", "user_id", "hash"]):
     return json.dumps(self.asDict(fields))  
+

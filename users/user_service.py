@@ -1,5 +1,6 @@
 from users.models import User
 from users.session_service import *
+from friends.friendship_service import Friendship_service
 from commons.exceptions import InvalidPasswordException, InvalidFieldsException, ExistingEmailException, ExistingLoginException
 from django.conf import settings
 import crypt
@@ -9,8 +10,10 @@ import json
 class User_service():
 
     session_service = None
+    friendship_service = None
 
-    def __init(self, session_service):
+    def __init__(self, session_service=None, friendship_service=None):
+        self.friendship_service = friendship_service
         self.session_service = session_service
 
     def findUser(self, filter):
@@ -50,3 +53,15 @@ class User_service():
             return user
         else:
             raise InvalidPasswordException(old_password)
+
+    def getFriendsList(self, user):
+        friends_ids = self.friendship_service.getUserFriendsIds(user)
+
+        friends = []
+
+        for friend_id in friends_ids:
+            user = self.findUser({"id": friend_id})
+            if user is not None:
+                friends.append(user)
+
+        return friends

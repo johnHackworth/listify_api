@@ -1,6 +1,6 @@
 v users/ (new - post)
 v users/{id} (save -put)
-users/friends -> get user friends
+v users/friends -> get user friends
 users/closeSession -> close current session
 users/recover -> recover password
 users/gethash -> ?
@@ -16,7 +16,7 @@ v item/{id} post
 v item/{id} get
 v item/{id} put
 v item/{id} delete
-item/copy/{id} 
+x? item/copy/{id}
 
 
 lists/friendItems/{user}
@@ -31,9 +31,9 @@ lists/full/all/{id} all user items
 notifications/ (get all)
 notifictions/{id} (put - save as read)
 
-friends/{user_id} (new - post)
-friends/{user_id} (delete - delete)
-friends/{user_id} (list - get)
+v friends/{user_id} (new - post)
+v friends/{user_id} (delete - delete)
+v friends/{user_id} (list - get)
 
 
 

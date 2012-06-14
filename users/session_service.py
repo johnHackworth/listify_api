@@ -17,21 +17,20 @@ class Session_service():
         session.hash = crypt(str(random()), settings.SESSION_SALT) + crypt(str(random()), settings.SESSION_SALT)
         return session
 
-    def getSession(self, request):
-        if 'HTTP_USER' in request.META and 'HTTP_SESSION' in request.META and 'HTTP_HASH' in request.META:
-            user_id = request.META['HTTP_USER']
-            session_id = request.META['HTTP_SESSION']
-            session_hash = request.META['HTTP_HASH']
-            result = Session.objects.filter(user_id=user_id, id=session_id, hash=session_hash)
-            if len(result) == 0:
-                return None
-            else:
-                return result[0]
-        else:
+    def getSession(self, user_id, session_id, session_hash):
+        result = Session.objects.filter(user_id=user_id, id=session_id, hash=session_hash)
+        if len(result) == 0:
             return None
+        else:
+            return result[0]
 
-    def getLoggedUser(self, request):
-        session = self.getSession(request)
+    def deleteSession(self, session_id, session_hash):
+        current_session = Session.objects.filter(id=session_id, hash=session_hash)
+        current_session.delete()
+        return None
+
+    def getLoggedUser(self, sessionDTO):
+        session = self.getSession(sessionDTO["user_id"], sessionDTO["session_id"], sessionDTO["session_hash"])
         if session is not None:
             return self.user_service.findUser({"id": session.user_id})
         else:

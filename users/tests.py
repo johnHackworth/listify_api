@@ -257,10 +257,6 @@ class userServiceTest(TestCase):
         self.assertFalse(friends[0].id == friends[1].id)
 
 
-
-
-
-
 class sessionServiceTest(TestCase):
     casesFactory = usersTestCaseFactory()
     user_service = User_service()
@@ -272,43 +268,35 @@ class sessionServiceTest(TestCase):
         self.assertTrue(session.hash is not None)
         self.assertTrue(len(session.hash) > 10)
 
+    def test_delete_session(self):
+        session = self.session_service.createSession(1)
+        session.save()
+        self.session_service.deleteSession(session.id, session.hash)
+        userSession = self.session_service.getSession(1, session.id, session.hash)
+
+        self.assertTrue(userSession is None)
+
     def test_getSession(self):
         session = self.session_service.createSession(1)
         session.save()
-        rf = RequestFactory()
-        request = rf.get('fake/path')
-        request = rf.setHeaders(1,session.id, session.hash, request)
-
-        userSession = self.session_service.getSession(request)
+        userSession = self.session_service.getSession(1, session.id, session.hash)
         self.assertFalse(userSession is None)
         self.assertTrue(userSession.id == session.id)
         self.assertTrue(userSession.user_id == 1)
 
-
     def test_logUser(self):
         user = self.casesFactory.user()
         user.save()
-
-        session = self.session_service.logUser('theAlchemist', 'abcde');
-
-        self.assertFalse(session == None);
+        session = self.session_service.logUser('theAlchemist', 'abcde')
+        self.assertFalse(session == None)
 
     def test_getLoggedUser(self):
         user = self.casesFactory.user()
         user.save()
         session = self.session_service.createSession(user.id)
         session.save()
-
-        rf = RequestFactory()
-        request = rf.get('fake/path')
-        request = rf.setHeaders(user.id,session.id, session.hash, request)
-
-        loggedUser = self.session_service.getLoggedUser(request)
+        sessionDTO = {"session_id": session.id, "user_id": user.id, "session_hash": session.hash}
+        loggedUser = self.session_service.getLoggedUser(sessionDTO)
 
         self.assertFalse(loggedUser is None)
         self.assertEquals(user.id, loggedUser.id)
-
-
-
-
-

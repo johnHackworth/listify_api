@@ -1,16 +1,22 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
+from users.models import *
+from users.session_service import *
+from commons.models import lfyHandler
+from commons.mocks import RequestFactory
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class lfyHandlerTests(TestCase):
+    def test_getRequestData(self):
+        handler = lfyHandler()
+        rf = RequestFactory()
+        request = rf.get('fake/path')
+        request = rf.setHeaders(1, 2, 3, request)
+
+        requestData = handler.getSessionData(request)
+
+        self.assertTrue('user_id' in requestData)
+        self.assertTrue('session_id' in requestData)
+        self.assertTrue('session_hash' in requestData)
+        self.assertEquals(requestData['user_id'], 1)
+        self.assertEquals(requestData['session_id'], 2)
+        self.assertEquals(requestData['session_hash'], 3)

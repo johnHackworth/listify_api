@@ -122,7 +122,8 @@ INSTALLED_APPS = (
     'users',
     'items',
     'commons',
-    'lists'
+    'lists',
+    'friends'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -148,5 +149,5 @@ LOGGING = {
     }
 }
 
-PASSWORD_SALT = "test"
+PASSWORD_SALT = "Do your neighbors burn one another alive?. was how Fraa Orolo began his conversation with Artisan Flec"
 SESSION_SALT = "test"

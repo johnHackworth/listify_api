@@ -1,7 +1,7 @@
 v users/ (new - post)
 v users/{id} (save -put)
 v users/friends -> get user friends
-users/closeSession -> close current session
+v users/closeSession -> close current session
 users/recover -> recover password
 users/gethash -> ?
 users/changePasswordHash -> ?

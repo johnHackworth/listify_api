@@ -7,7 +7,7 @@ from commons.exceptions import InvalidFieldsException, InvalidPasswordException,
 from commons.models import lfyHandler
 
 
-class LoginHandler(lfyHandler):
+class SessionHandler(lfyHandler):
     allowed_methods = ('GET')
     user_service = User_service()
     session_service = Session_service(user_service)
@@ -23,6 +23,7 @@ class LoginHandler(lfyHandler):
             return HttpResponse(result)
 
     def delete(self, id, request):
+        # delete session
         pass
 
 
@@ -47,7 +48,8 @@ class UserHandler(lfyHandler):
             return self.getUser(identification, "login")
 
     def update(self, request, identification):
-        loggedUser = self.session_service.getLoggedUser(request)
+        sessionDTO = self.getSessionData(request)
+        loggedUser = self.session_service.getLoggedUser(sessionDTO)
         if loggedUser is not None:
             if str(loggedUser.id) != str(identification):
                 return HttpResponseForbidden('<h1>not the user</h1>')

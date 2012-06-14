@@ -1,14 +1,14 @@
 from django.conf.urls.defaults import patterns, url
 from commons.models import CsrfExemptResource
-from users.handlers import LoginHandler, UserHandler, FriendsHandler
-login_handler = CsrfExemptResource(LoginHandler)
+from users.handlers import SessionHandler, UserHandler, FriendsHandler
+session_handler = CsrfExemptResource(SessionHandler)
 user_handler = CsrfExemptResource(UserHandler)
 friends_handler = CsrfExemptResource(FriendsHandler)
 
 urlpatterns = patterns('',
-	url(r'^log/', login_handler),
+    url(r'^session/', session_handler),
     url(r'^(?P<identification>\w+)/friends/$', friends_handler),
-	url(r'^(?P<identification>\w+)/$', user_handler),
-	url('', user_handler),
+    url(r'^(?P<identification>\w+)/$', user_handler),
+    url('', user_handler),
 
 )

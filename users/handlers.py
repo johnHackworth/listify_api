@@ -2,8 +2,9 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidde
 from users.user_service import User_service
 from users.models import User, UserList
 from users.session_service import Session_service
+from users.password_recovery_service import Password_recovery_service
 from friends.friendship_service import Friendship_service
-from commons.exceptions import InvalidFieldsException, InvalidPasswordException, ExistingUserException
+from commons.exceptions import InvalidFieldsException, InvalidPasswordException, ExistingUserException, TooMuchAttempsException
 from commons.models import lfyHandler
 
 
@@ -94,3 +95,25 @@ class FriendsHandler(lfyHandler):
         friends = UserList(self.user_service.getFriendsList(user))
 
         return HttpResponse(friends.asJSON(self.fields))
+
+
+class PasswordChangeHandler(lfyHandler):
+
+    allowed_methods = ('PUT, POST')
+    user_service = User_service(Friendship_service())
+    password_request_service = Password_recovery_service()
+
+    def create(self, request):
+        user_email = request.POST.get('user_email')
+        user = self.user_service.findUser({"email": user_email})
+        if user is not None:
+            try:
+                self.password_request_service.create(user.id)
+                return HttpResponse()
+            except TooMuchAttempsException:
+                return HttpResponseForbidden('You have requested a new password too much. Wait some time.')
+        else:
+            return HttpResponseForbidden('User not found')
+
+    def update(self, request):
+        pass

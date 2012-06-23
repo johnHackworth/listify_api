@@ -22,4 +22,7 @@ class ExistingEmailException(ExistingUserException):
 	txt = 'Existing email: '
 
 class ExistingLoginException(ExistingUserException):
-	txt = 'Existing login: '	
+	txt = 'Existing login: '
+
+class TooMuchAttempsException(lfyException):
+	txt = 'To much attemps '

@@ -8,9 +8,11 @@ import json
 class User_service():
 
     friendship_service = None
+    password_recovery_service = None
 
-    def __init__(self, friendship_service=None):
+    def __init__(self, friendship_service=None, password_recovery_service=None):
         self.friendship_service = friendship_service
+        self.password_recovery_service = password_recovery_service
 
     def findUser(self, filter):
         users = User.objects.filter(**filter)
@@ -61,3 +63,17 @@ class User_service():
                 friends.append(user)
 
         return friends
+
+    def changePassword(self, user, hash, password):
+        if self.password_recovery_service is not None:
+            change_password = self.password_recovery_service.check_hash(hash, user.id)
+            if change_password is not None:
+                user.password = crypt.crypt(password, settings.PASSWORD_SALT)
+                user.save()
+                self.password_recovery_service.mark_hash_as_used(user.id)
+                return True
+            else:
+                return False
+        return False
+
+

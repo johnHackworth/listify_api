@@ -116,4 +116,20 @@ class PasswordChangeHandler(lfyHandler):
             return HttpResponseForbidden('User not found')
 
     def update(self, request):
-        pass
+        hash = request.PUT.get('hash')
+        new_password = request.PUT.get('password')
+        user_email = request.PUT.get('email')
+
+        user = self.user_service.findUser({"email": user_email})
+        if user is not None:
+            if self.user_service.changePassword(user, hash, new_password):
+                return HttpResponse()
+            else:
+                return HttpResponseNotFound('Incorrect hash')
+        else:
+            return HttpResponseForbidden('invalid user')
+
+
+
+
+

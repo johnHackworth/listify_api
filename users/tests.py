@@ -10,7 +10,10 @@ from users.models import *
 from users.user_service import User_service
 from users.session_service import *
 from friends.friendship_service import Friendship_service
-from commons.mocks import RequestFactory
+from users.password_recovery_service import Password_recovery_service
+from users.mocks import Password_recovery_service_mock
+from django.utils.unittest import skipIf
+from django.conf import settings
 from crypt import crypt
 from commons.exceptions import InvalidFieldsException, InvalidPasswordException
 import json
@@ -23,7 +26,7 @@ class usersTestCaseFactory:
         user.lastname = 'Hackworth'
         user.login = 'theAlchemist'
         user.password = crypt("abcde", settings.PASSWORD_SALT)
-        user.email = 'thealchemist@listify.es'
+        user.email = 'thealchemis@listify.es'
         user.location = 'Shangai'
         user.country = 1
         user.gender = 1
@@ -81,7 +84,6 @@ class UserModelTest(TestCase):
     def test_export_json(self):
         user = self.casesFactory.user()
         jsonObj = user.asJSON(['name'])
-        print jsonObj
         self.assertTrue(jsonObj =='{"name": "Johnathan Percival"}')
 
     def test_validate(self):
@@ -123,15 +125,11 @@ class UserModelTest(TestCase):
             self.fail()
 
 
-
-
-
-
-
 class userServiceTest(TestCase):
     casesFactory = usersTestCaseFactory()
     user_service = User_service(Friendship_service())
     session_service = Session_service(user_service)
+    password_recovery_service = Password_recovery_service_mock()
 
     def test_findUser(self):
         newUsers = self.casesFactory.users()
@@ -256,6 +254,18 @@ class userServiceTest(TestCase):
         self.assertEquals(friends[1].id, user3.id)
         self.assertFalse(friends[0].id == friends[1].id)
 
+    def test_changePassword(self):
+        user = self.casesFactory.user()
+        user.save()
+        self.user_service.password_recovery_service = self.password_recovery_service
+        new_psw = 'newPass'
+        crypt_psw = crypt(new_psw, settings.PASSWORD_SALT)
+
+        self.user_service.changePassword(user, '1234512345', new_psw)
+
+        self.assertEquals(user.password, crypt_psw)
+        self.assertTrue(self.password_recovery_service.password_change.used)
+
 
 class sessionServiceTest(TestCase):
     casesFactory = usersTestCaseFactory()
@@ -300,3 +310,37 @@ class sessionServiceTest(TestCase):
 
         self.assertFalse(loggedUser is None)
         self.assertEquals(user.id, loggedUser.id)
+
+
+
+
+
+class PasswordRecoveryServiceTest(TestCase):
+
+    password_recovery_service = Password_recovery_service()
+
+    def test_createHash(self):
+        # lesson for the future: Never, never, ever finish something and don't commit it.
+        # I had this tests completed and I overwrite the file by mistake. Fuck. Fuck. Fuck.
+        recovery = self.password_recovery_service.create(1)
+        self.assertFalse(recovery is None)
+
+    @skipIf(True, True)
+    def test_createAndPersist(self):
+        pass
+
+    @skipIf(True, True)
+    def test_checkHash(self):
+        pass
+
+    @skipIf(True, True)
+    def test_failsIfToManyAttemps(self):
+        pass
+
+    @skipIf(True, True)
+    def test_notFailsIfAttempsAreOld(self):
+        pass
+
+    @skipIf(True, True)
+    def test_markAsUsed(self):
+        pass

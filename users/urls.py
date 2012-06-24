@@ -8,7 +8,7 @@ friends_handler = CsrfExemptResource(FriendsHandler)
 
 urlpatterns = patterns('',
     url(r'^session/', session_handler),
-    url(r'^requestPasswordChange/', password_change_handler),
+    url(r'^passwordChange/', password_change_handler),
     url(r'^(?P<identification>\w+)/friends/$', friends_handler),
     url(r'^(?P<identification>\w+)/$', user_handler),
     url('', user_handler),

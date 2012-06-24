@@ -100,8 +100,8 @@ class FriendsHandler(lfyHandler):
 class PasswordChangeHandler(lfyHandler):
 
     allowed_methods = ('PUT, POST')
-    user_service = User_service(Friendship_service())
     password_request_service = Password_recovery_service()
+    user_service = User_service(Friendship_service(), password_request_service)
 
     def create(self, request):
         user_email = request.POST.get('user_email')
@@ -118,7 +118,7 @@ class PasswordChangeHandler(lfyHandler):
     def update(self, request):
         hash = request.PUT.get('hash')
         new_password = request.PUT.get('password')
-        user_email = request.PUT.get('email')
+        user_email = request.PUT.get('user_email')
 
         user = self.user_service.findUser({"email": user_email})
         if user is not None:
@@ -128,7 +128,6 @@ class PasswordChangeHandler(lfyHandler):
                 return HttpResponseNotFound('Incorrect hash')
         else:
             return HttpResponseForbidden('invalid user')
-
 
 
 

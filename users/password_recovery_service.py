@@ -18,7 +18,7 @@ class Password_recovery_service():
         return password_recovery_request
 
     def check_hash(self, hash, user_id):
-        requests = Passwordchange.objects.filter(hash=hash, user_id=user_id)
+        requests = Passwordchange.objects.filter(hash=hash, user_id=user_id, used=False)
         persisted = None
         if len(requests) != 0:
             newer_requests = Passwordchange.objects.filter(

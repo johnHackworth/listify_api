@@ -1,9 +1,13 @@
+v = done
+- = test skipped
+x - not needed
+
 v users/ (new - post)
 v users/{id} (save -put)
 v users/friends -> get user friends
 v users/closeSession -> close current session
-v users/requestPasswordChange -> create a new password change
-users/changePassword
+- users/requestPasswordChange -> create a new password change
+v users/changePassword
 
 
 favorites/favorites/{user}

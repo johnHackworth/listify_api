@@ -15,7 +15,9 @@ from users.mocks import Password_recovery_service_mock
 from django.utils.unittest import skipIf
 from django.conf import settings
 from crypt import crypt
-from commons.exceptions import InvalidFieldsException, InvalidPasswordException
+from commons.exceptions import InvalidFieldsException, InvalidPasswordException, TooMuchAttempsException
+from datetime import timedelta
+
 import json
 
 
@@ -324,23 +326,72 @@ class PasswordRecoveryServiceTest(TestCase):
         # I had this tests completed and I overwrite the file by mistake. Fuck. Fuck. Fuck.
         recovery = self.password_recovery_service.create(1)
         self.assertFalse(recovery is None)
+        self.assertEquals(recovery.user_id, 1)
+        self.assertFalse(recovery.used)
+        self.assertFalse(recovery.hash is None)
 
-    @skipIf(True, True)
     def test_createAndPersist(self):
-        pass
+        recovery = self.password_recovery_service.create(2)
+        self.assertFalse(recovery is None)
+        self.assertEquals(recovery.user_id, 2)
+        self.assertFalse(recovery.used)
 
-    @skipIf(True, True)
+        persisted_recoveries = Passwordchange.objects.filter(user_id=2)
+
+        self.assertEqual(len(persisted_recoveries), 1)
+
+        persisted = persisted_recoveries[0]
+        self.assertEqual(recovery.id, persisted.id)
+
     def test_checkHash(self):
-        pass
+        recovery = self.password_recovery_service.create(3)
+        hash = recovery.hash
 
-    @skipIf(True, True)
+        persisted = self.password_recovery_service.check_hash(hash, 3)
+
+        self.assertTrue(persisted is not None)
+        self.assertTrue(isinstance(persisted, Passwordchange))
+
+        persisted2 = self.password_recovery_service.check_hash('12345', 3)
+        self.assertTrue(persisted2 is None)
+
+        persisted.used = True
+        persisted.save()
+
+        persisted3 = self.password_recovery_service.check_hash(hash, 3)
+        self.assertTrue(persisted3 is None)
+
     def test_failsIfToManyAttemps(self):
-        pass
+        recovery = self.password_recovery_service.create(4)
+        recovery2 = self.password_recovery_service.create(4)
+        recovery3 = self.password_recovery_service.create(4)
+        recovery4 = self.password_recovery_service.create(4)
+        recovery5 = self.password_recovery_service.create(4)
+        try:
+            recovery6 = self.password_recovery_service.create(4)
+            self.fail('it let you create more than 5 password request in an hour')
+        except TooMuchAttempsException:
+            self.assertTrue(True)
 
-    @skipIf(True, True)
     def test_notFailsIfAttempsAreOld(self):
-        pass
+        recovery = self.password_recovery_service.create(5)
+        recovery2 = self.password_recovery_service.create(5)
+        recovery3 = self.password_recovery_service.create(5)
+        recovery4 = self.password_recovery_service.create(5)
+        recovery5 = self.password_recovery_service.create(5)
+        recovery5.date = recovery5.date - timedelta(hours=2)
+        recovery5.save()
+        try:
+            recovery6 = self.password_recovery_service.create(5)
+            self.assertTrue(True)
+        except TooMuchAttempsException:
+            self.fail('it fail when you create more than 5 password request even if one is old')
 
-    @skipIf(True, True)
     def test_markAsUsed(self):
-        pass
+        recovery = self.password_recovery_service.create(6)
+
+        self.password_recovery_service.mark_hash_as_used(6)
+
+        persisted = Passwordchange.objects.filter(id=recovery.id)
+
+        self.assertTrue(persisted[0].used)

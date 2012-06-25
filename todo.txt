@@ -10,16 +10,16 @@ v users/closeSession -> close current session
 v users/changePassword
 
 
-favorites/favorites/{user}
-favorites/favoritesByOthets/{user}
-favorites/favorite/{item_id} (new - post)
-favorites/favorite/{item_id} (delete - delete)
+v favorites/favorites/{user}
+v favorites/favoritesByOthets/{user}
+v favorites/favorite/{item_id} (new - post)
+v favorites/favorite/{item_id} (delete - delete)
 
 v item/{id} post
 v item/{id} get
 v item/{id} put
 v item/{id} delete
-x? item/copy/{id}
+x item/copy/{id}
 
 
 lists/friendItems/{user}
@@ -38,12 +38,13 @@ v friends/{user_id} (new - post)
 v friends/{user_id} (delete - delete)
 v friends/{user_id} (list - get)
 
-
+amazon ses for python
+parse page
+create capture
 
 comments/user -> get user comments
 comments/item -> get item comments
 comments/responses/{user} -> get responses
 
-after beta deploy:
 
-amazon ses for python
+

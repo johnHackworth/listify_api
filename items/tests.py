@@ -1,8 +1,12 @@
 from django.test import TestCase
 from items.models import *
 from items.item_service import *
+from lists.models import *
 from commons.exceptions import InvalidFieldsException
 from items.mocks import ItemTestCaseFactory
+from django.utils.unittest import skipIf
+from friends.mocks import Frienship_service_mock
+from lists.mocks import List_service_mock
 
 
 class ItemModelTest(TestCase):
@@ -18,12 +22,14 @@ class ItemModelTest(TestCase):
 
 class ItemServiceTest(TestCase):
     cases_factory = ItemTestCaseFactory()
-    item_service = Item_service(None)
+    list_service_mock = List_service_mock()
+    friendship_service_mock = Frienship_service_mock()
+    item_service = Item_service(list_service_mock, friendship_service_mock)
 
-    def test_findOneItem(self):
+    def test_findOne(self):
         item = self.cases_factory.item()
         item.save()
-        item = self.item_service.findOneItem({"text": "old computer"})
+        item = self.item_service.findOne({"text": "old computer"})
         self.assertEquals(item.name, "Sinclair Spectrum")
 
     def test_findItems(self):
@@ -88,6 +94,33 @@ class ItemServiceTest(TestCase):
             print e
             success = False
         self.assertTrue(success)
+
+    def test_is_viewable(self):
+        #@todo: we should mock List here
+        it = self.cases_factory.item()
+        test_list = List(user_id=10, name="test", permissions=0)
+        test_list.save()
+        self.list_service_mock.list = test_list
+
+        it.list_id = test_list.id
+        it.save()
+
+        viewable = self.item_service.is_viewable(it, 1)
+        self.assertTrue(viewable)
+
+    def test_is_not_viewable(self):
+        it = self.cases_factory.item()
+        test_list = List(user_id=10, name="test", permissions=2)
+        test_list.save()
+        self.list_service_mock.list = test_list
+
+        it.list_id = test_list.id
+        it.save()
+
+        viewable = self.item_service.is_viewable(it, 1)
+        self.assertFalse(viewable)
+
+
 
 
 

@@ -14,6 +14,13 @@ class User_service():
         self.friendship_service = friendship_service
         self.password_recovery_service = password_recovery_service
 
+    def find(self, *args, **kwargs):
+        users = User.objects.filter(**kwargs)
+        if len(users) > 0:
+            return users[0]
+        else:
+            return None
+
     def findUser(self, filter):
         users = User.objects.filter(**filter)
         if len(users) > 0:

@@ -17,7 +17,7 @@ class ItemHandler(lfyHandler):
     fields = ["name", "url", "image_url", "text", "price", "currency", "author", "state", "screencap", "list_id"]
 
     def read(self, request, id):
-        item = self.item_service.findOneItem({"id": id})
+        item = self.item_service.findOne({"id": id})
         if item is not None:
             loggedUser = self.session_service.getLoggedUser(request)
             ownerUser = self.user_service.findUser({"id": item.user_id})
@@ -33,7 +33,7 @@ class ItemHandler(lfyHandler):
     def update(self, request, id):
         loggedUser = self.session_service.getLoggedUser(request)
         if loggedUser is not None:
-            item = self.item_service.findOneItem({"id": id})
+            item = self.item_service.findOne({"id": id})
             if item is not None:
                 if loggedUser.id != item.user_id:
                     return HttpResponseForbidden('<h1>not the owner</h1>')
@@ -51,7 +51,7 @@ class ItemHandler(lfyHandler):
         loggedUser = self.session_service.getLoggedUser(request)
 
         if loggedUser is not None:
-            item = self.item_service.findOneItem({"id": id})
+            item = self.item_service.findOne({"id": id})
             if item is not None:
                 if loggedUser.id != item.user_id:
                     return HttpResponseForbidden('<h1>not the owner</h1>')

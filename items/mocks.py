@@ -20,3 +20,8 @@ class ItemTestCaseFactory(UsersTestCaseFactory):
         item.state = 1
         item.screencap = ""
         return item
+
+    def persited_item(self):
+        item = self.item()
+        item.save()
+        return item

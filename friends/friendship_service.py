@@ -3,26 +3,36 @@ from friends.models import Friendship
 
 class Friendship_service():
 
-    def getFriendship(self, user, friend):
-        friendship = Friendship.objects.filter(user_id=user.id, friend_id=friend.id)
+    def getFriendshipById(self, user_id, friend_id):
+        friendship = Friendship.objects.filter(user_id=user_id, friend_id=friend_id)
         return friendship
 
-    def isFriend(self, user, friend):
-        if user.id == friend.id:
+    def getFriendship(self, user, friend):
+        return self.getFriendshipById(user.id, friend.id)
+
+    def isFriendById(self, user_id, friend_id):
+        if user_id == friend_id:
             return True
-        friendship = self.getFriendship(user, friend)
+        friendship = self.getFriendshipById(user_id, friend_id)
         if len(friendship) > 0:
             return True
         else:
             return False
 
-    def getRelation(self, user, friend):
-        if user.id == friend.id:
+    def isFriend(self, user, friend):
+        return self.isFriendById(user.id, friend.id)
+
+    def getRelationById(self, user_id, friend_id):
+        if user_id == friend_id:
             return Friendship.SAME_USER
-        elif self.isFriend(user, friend):
+        elif self.isFriendById(user_id, friend_id):
             return Friendship.FRIENDS
         else:
             return Friendship.STRANGERS
+
+    def getRelation(self, user, friend):
+        return self.getRelationById(user.id, friend.id)
+
 
     def makeFriendship(self, user, friend):
         if self.getRelation(user, friend) == Friendship.STRANGERS:

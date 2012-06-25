@@ -8,7 +8,7 @@ import json
 class lfyModel():
     fields = []
 
-    def asDict(self, fields=None):
+    def as_dict(self, fields=None):
         if fields is None:
             fields = self.fields
         dictionary = {}
@@ -20,8 +20,8 @@ class lfyModel():
             dictionary[field] = fieldValue
         return dictionary
 
-    def asJSON(self, fields=None):
-        return json.dumps(self.asDict(fields))
+    def as_json(self, fields=None):
+        return json.dumps(self.as_dict(fields))
 
 
 class CsrfExemptResource(Resource):

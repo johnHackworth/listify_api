@@ -11,7 +11,7 @@ from users.user_service import User_service
 from users.session_service import *
 from friends.friendship_service import Friendship_service
 from users.password_recovery_service import Password_recovery_service
-from users.mocks import Password_recovery_service_mock
+from users.mocks import Password_recovery_service_mock, UsersTestCaseFactory
 from django.utils.unittest import skipIf
 from django.conf import settings
 from crypt import crypt
@@ -21,51 +21,13 @@ from datetime import timedelta
 import json
 
 
-class usersTestCaseFactory:
-    def user(self):
-        user = User()
-        user.name = 'Johnathan Percival'
-        user.lastname = 'Hackworth'
-        user.login = 'theAlchemist'
-        user.password = crypt("abcde", settings.PASSWORD_SALT)
-        user.email = 'thealchemis@listify.es'
-        user.location = 'Shangai'
-        user.country = 1
-        user.gender = 1
-        user.aboutme = 'Nanotechnology and neovictorianism'
-        return user
-
-    def users(self):
-        user = User()
-        user.name = 'Erasmas'
-        user.login = 'erasmas'
-        user.password = crypt("abcde", settings.PASSWORD_SALT)
-        user.email = 'a1@listify.es'
-        user.save()
-        user2 = User()
-        user2.name = 'Orolo'
-        user2.login = 'orolo'
-        user2.password = crypt("abcde", settings.PASSWORD_SALT)
-        user2.email = 'a2@listify.es'
-
-        user2.save()
-        user3 = User()
-        user3.name = 'Raz'
-        user3.login = 'raz'
-        user3.password = crypt("abcde", settings.PASSWORD_SALT)
-        user3.email = 'a3@listify.es'
-
-        user3.save()
-        return [user, user2, user3]
-
-
 class UserModelTest(TestCase):
-    casesFactory = usersTestCaseFactory()
+    casesFactory = UsersTestCaseFactory()
 
     def test_export_dictionary(self):
         user = self.casesFactory.user()
 
-        dictObj = user.asDict(['name', 'lastname', 'country'])
+        dictObj = user.as_dict(['name', 'lastname', 'country'])
         self.assertEqual(dictObj['name'], 'Johnathan Percival')
         self.assertEqual(dictObj['lastname'], 'Hackworth')
         self.assertEqual(dictObj['country'], 1)
@@ -75,7 +37,7 @@ class UserModelTest(TestCase):
         except:
             self.assertTrue(True)
 
-        dictObj = user.asDict(['gender'])
+        dictObj = user.as_dict(['gender'])
         try:
             country = dictObj['country']
             self.assertFalse(True)
@@ -85,7 +47,7 @@ class UserModelTest(TestCase):
 
     def test_export_json(self):
         user = self.casesFactory.user()
-        jsonObj = user.asJSON(['name'])
+        jsonObj = user.as_json(['name'])
         self.assertTrue(jsonObj =='{"name": "Johnathan Percival"}')
 
     def test_validate(self):
@@ -128,7 +90,7 @@ class UserModelTest(TestCase):
 
 
 class userServiceTest(TestCase):
-    casesFactory = usersTestCaseFactory()
+    casesFactory = UsersTestCaseFactory()
     user_service = User_service(Friendship_service())
     session_service = Session_service(user_service)
     password_recovery_service = Password_recovery_service_mock()
@@ -210,8 +172,8 @@ class userServiceTest(TestCase):
 
         userSessionInfo = self.user_service.userSessionInfo(user1, session)
 
-        testCase = user1.asDict()
-        testCase2 = session.asDict(["id", "hash"])
+        testCase = user1.as_dict()
+        testCase2 = session.as_dict(["id", "hash"])
         testCase["session"] = testCase2
         testCase = json.dumps(testCase)
 
@@ -270,7 +232,7 @@ class userServiceTest(TestCase):
 
 
 class sessionServiceTest(TestCase):
-    casesFactory = usersTestCaseFactory()
+    casesFactory = UsersTestCaseFactory()
     user_service = User_service()
     session_service = Session_service(user_service)
 

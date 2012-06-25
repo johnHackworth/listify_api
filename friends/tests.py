@@ -1,11 +1,11 @@
 from django.test import TestCase
 from friends.models import *
 from friends.friendship_service import Friendship_service
-from users.tests import usersTestCaseFactory
+from users.mocks import UsersTestCaseFactory
 
 
 class FriendshipModelTest(TestCase):
-    casesFactory = usersTestCaseFactory()
+    casesFactory = UsersTestCaseFactory()
 
     def test_create(self):
         user1 = self.casesFactory.user()
@@ -18,7 +18,7 @@ class FriendshipModelTest(TestCase):
 
 
 class FriendshipServiceTest(TestCase):
-    casesFactory = usersTestCaseFactory()
+    casesFactory = UsersTestCaseFactory()
     friendship_service = Friendship_service()
 
     def createUsers(self):

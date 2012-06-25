@@ -7,7 +7,7 @@ manager = User_service()
 def getUser(value, field):
   user = manager.findUser({field: value})
   if user is not None:
-    return HttpResponse(user.asJSON())
+    return HttpResponse(user.as_json())
   else:
     return HttpResponseNotFound('<h1>User not found</h1>')
 

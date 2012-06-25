@@ -29,8 +29,8 @@ class User(lfyModel, models.Model):
 
     fields = ["id", "name", "lastname", "login", "email", "location", "country", "gender", "aboutme", "languaje", "access_number"]
 
-    def asDict(self, fields=None):
-        dictionary = super(User, self).asDict(fields)
+    def as_dict(self, fields=None):
+        dictionary = super(User, self).as_dict(fields)
 
         if self.image_id is not None and self.image_id > 0:
             imageObj = Image.objects.filter(id=self.image_id)
@@ -60,15 +60,22 @@ class Session(models.Model):
     user_id = models.IntegerField(max_length=7)
     hash = models.CharField(max_length=255)
 
-    def asDict(self, fields=["id", "user_id", "hash"]):
+    def as_dict(self, fields=["id", "user_id", "hash"]):
         dictionary = {}
         for field in fields:
             dictionary[field] = getattr(self, field)
 
         return dictionary
 
-    def asJSON(self, fields=["id", "user_id", "hash"]):
-        return json.dumps(self.asDict(fields))
+    def as_json(self, fields=["id", "user_id", "hash"]):
+        return json.dumps(self.as_dict(fields))
+
+    def get_session_DTO(self):
+        sessionDTO = {}
+        sessionDTO["user_id"] = self.user_id
+        sessionDTO["session_id"] = self.id
+        sessionDTO["session_hash"] = self.hash
+        return sessionDTO
 
 
 class UserList():
@@ -79,12 +86,12 @@ class UserList():
         if fields is not None:
             self.fields = fields
 
-    def asJSON(self, fields=None):
+    def as_json(self, fields=None):
         members = []
         if fields is None:
             fields = self.fields
         for user in self.elements:
-            members.append(user.asDict(fields))
+            members.append(user.as_dict(fields))
         return json.dumps(members)
 
     elements = []

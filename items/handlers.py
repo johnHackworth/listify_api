@@ -24,7 +24,7 @@ class ItemHandler(lfyHandler):
             # @TODO : waiting for list_service to be implemented
             # if self.list_service.getPermissions(item.list_id) <= self.user_service.getRelationLevel(ownerUser, loggedUser):
             if True:
-                return HttpResponse(item.asJSON())
+                return HttpResponse(item.as_json())
             else:
                 return HttpResponseNotAllowed('<h1>not allowed</h1>')
         else:
@@ -41,7 +41,7 @@ class ItemHandler(lfyHandler):
                     self.fromRequest(request, item, self.fields)
                     self.item_service.saveItem(item)
 
-                return HttpResponse(item.asJSON())
+                return HttpResponse(item.as_json())
             else:
                 return HttpResponseNotFound()
         else:
@@ -78,6 +78,6 @@ class ItemHandler(lfyHandler):
 
             self.item_service.saveItem(item)
 
-            return HttpResponse(item.asJSON())
+            return HttpResponse(item.as_json())
         else:
             return HttpResponseForbidden('<h1>not a user</h1>')

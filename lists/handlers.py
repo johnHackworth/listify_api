@@ -8,7 +8,7 @@ from commons.exceptions import MethodNotAllowedException, InvalidFieldsException
 from commons.models import lfyHandler
 
 
- 
+
 class ListHandler(lfyHandler):
   allowed_methods = ('GET, PUT, POST, DELETE')
   user_service = User_service()
@@ -16,7 +16,7 @@ class ListHandler(lfyHandler):
   session_service = Session_service(user_service)
 
   fields = ["name", "permissions", "description"]
- 
+
   def read(self, request, id):
     lfyList = self.list_service.findOneList({"id":id})
     if lfyList is not None:
@@ -24,7 +24,7 @@ class ListHandler(lfyHandler):
       ownerUser = self.user_service.findUser({"id":lfyList.user_id})
       # @TODO: test if the users are friends against teh
       if True:
-        return HttpResponse(lfyList.asJSON())
+        return HttpResponse(lfyList.as_json())
       else:
         return HttpResponseNotAllowed('<h1>not allowed</h1>')
     else:
@@ -40,16 +40,16 @@ class ListHandler(lfyHandler):
         else:
           self.fromRequest(request, lfyList, self.fields)
           self.list_service.saveList(lfyList)
-        
-        return HttpResponse(lfyList.asJSON())
+
+        return HttpResponse(lfyList.as_json())
       else:
-        return HttpResponseNotFound()      
+        return HttpResponseNotFound()
     else:
-      return HttpResponseForbidden('<h1>not a user</h1>')      
+      return HttpResponseForbidden('<h1>not a user</h1>')
 
   def delete(self, request, id):
     loggedUser = self.session_service.getLoggedUser(request)
-    
+
     if loggedUser is not None:
       lfyList = self.list_service.findOneList({"id":id})
       if lfyList is not None:
@@ -59,10 +59,10 @@ class ListHandler(lfyHandler):
           lfyList.delete()
           return HttpResponse('<h1>ok</h1>')
       else:
-        return HttpResponseNotFound()      
+        return HttpResponseNotFound()
 
     else:
-      return HttpResponseForbidden('<h1>not a user</h1>')      
+      return HttpResponseForbidden('<h1>not a user</h1>')
 
   def create(self, request):
 
@@ -77,6 +77,6 @@ class ListHandler(lfyHandler):
       except InvalidFieldsException as invalidFields:
         return HttpResponseForbidden(invalidFields)
 
-      return HttpResponse(lfyList.asJSON())
+      return HttpResponse(lfyList.as_json())
     else:
-      return HttpResponseForbidden('<h1>not a user</h1>')      
+      return HttpResponseForbidden('<h1>not a user</h1>')

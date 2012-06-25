@@ -38,7 +38,7 @@ class UserHandler(lfyHandler):
     def getUser(self, value, field):
         user = self.user_service.findUser({field: value})
         if user is not None:
-            return HttpResponse(user.asJSON())
+            return HttpResponse(user.as_json())
         else:
             return HttpResponseNotFound('<h1>User not found</h1>')
 
@@ -62,7 +62,7 @@ class UserHandler(lfyHandler):
                     return HttpResponseForbidden(invalid_fields)
                 except ExistingUserException as invalid_user:
                     return HttpResponseForbidden(invalid_user)
-                return HttpResponse(loggedUser.asJSON())
+                return HttpResponse(loggedUser.as_json())
         else:
             return HttpResponseForbidden('<h1>not a user</h1>')
 
@@ -81,7 +81,7 @@ class UserHandler(lfyHandler):
         except ExistingUserException as invalid_user:
             return HttpResponseForbidden(invalid_user)
 
-        return HttpResponse(user.asJSON())
+        return HttpResponse(user.as_json())
 
 
 class FriendsHandler(lfyHandler):
@@ -94,7 +94,7 @@ class FriendsHandler(lfyHandler):
         user = self.user_service.findUser({"id": identification})
         friends = UserList(self.user_service.getFriendsList(user))
 
-        return HttpResponse(friends.asJSON(self.fields))
+        return HttpResponse(friends.as_json(self.fields))
 
 
 class PasswordChangeHandler(lfyHandler):

@@ -123,7 +123,8 @@ INSTALLED_APPS = (
     'items',
     'commons',
     'lists',
-    'friends'
+    'friends',
+    'favorites'
 )
 
 # A sample logging configuration. The only tangible logging

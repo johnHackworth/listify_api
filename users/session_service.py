@@ -15,6 +15,7 @@ class Session_service():
         session = Session()
         session.user_id = user_id
         session.hash = crypt(str(random()), settings.SESSION_SALT) + crypt(str(random()), settings.SESSION_SALT)
+        session.save()
         return session
 
     def getSession(self, user_id, session_id, session_hash):
@@ -42,6 +43,5 @@ class Session_service():
             if user is not None:
                 if user.password == crypt(password, settings.PASSWORD_SALT):
                     session = self.createSession(user.id)
-                    session.save()
                     return self.user_service.userSessionInfo(user, session)
         return None

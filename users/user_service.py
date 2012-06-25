@@ -22,8 +22,8 @@ class User_service():
             return None
 
     def userSessionInfo(self, user, session):
-        userDict = user.asDict()
-        userDict['session'] = session.asDict(["id", "hash"])
+        userDict = user.as_dict()
+        userDict['session'] = session.as_dict(["id", "hash"])
         return json.dumps(userDict)
 
     def saveUser(self, user):

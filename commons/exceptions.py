@@ -1,6 +1,6 @@
 class lfyException(Exception):
 	txt = 'error: '
-	def __init__(self, value):
+	def __init__(self, value = ""):
 		self.value = value
 	def __str__(self):
 		return repr(self.txt+str(self.value))
@@ -26,3 +26,6 @@ class ExistingLoginException(ExistingUserException):
 
 class TooMuchAttempsException(lfyException):
 	txt = 'To much attemps '
+
+class NotLoggedException(lfyException):
+	txt = 'You need to be logged to complete this action '
